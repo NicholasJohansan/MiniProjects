@@ -91,17 +91,17 @@ class Rook(ChessPiece):
 
 	def get_all_possible_tiles(self, current_tile):
 		possible_moves = {
-			"up": [],
-			"down": [],
-			"left": [],
-			"right": []
+			"n": [],
+			"s": [],
+			"w": [],
+			"e": []
 		}
 		for key in possible_moves.keys():
 			func = {
-				"up": lambda row, col: (row-1, col),
-				"down": lambda row, col: (row+1, col),
-				"left": lambda row, col: (row, col-1),
-				"right": lambda row, col: (row, col+1)
+				"n": lambda row, col: (row-1, col),
+				"s": lambda row, col: (row+1, col),
+				"w": lambda row, col: (row, col-1),
+				"e": lambda row, col: (row, col+1)
 			}.get(key)
 			row, col = current_tile
 			while not (row <= 0 or row >= 7 or col <= 0 or col >= 7):
@@ -138,7 +138,24 @@ class Bishop(ChessPiece):
 		self.has_moved = False
 
 	def get_all_possible_tiles(self, current_tile):
-		return []
+		possible_moves = {
+			"ne": [],
+			"se": [],
+			"sw": [],
+			"nw": []
+		}
+		for key in possible_moves.keys():
+			func = {
+				"ne": lambda row, col: (row-1, col+1),
+				"se": lambda row, col: (row+1, col+1),
+				"sw": lambda row, col: (row+1, col-1),
+				"nw": lambda row, col: (row-1, col-1)
+			}.get(key)
+			row, col = current_tile
+			while not (row <= 0 or row >= 7 or col <= 0 or col >= 7):
+				row, col = func(row, col)
+				possible_moves[key].append((row, col))
+		return possible_moves
 
 class Queen(ChessPiece):
 	piece_name = "Q"
