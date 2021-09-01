@@ -68,12 +68,12 @@ Select an option
 					gc_collect()
 			else:
 				while True:
-					input("\nenter to update status")
 					try:
 						data = self.fetch_info()
 					except IndexError:
 						data = {"playback_status": "Idle"}
 					self.update_status(data)
+					input("\nenter to update status")
 
 		except KeyboardInterrupt:
 			return
