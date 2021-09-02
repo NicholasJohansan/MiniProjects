@@ -68,18 +68,6 @@ class ChessPiece:
 		self.side = side # B/W
 		self.chess_piece = side.value + piece_name
 
-	@staticmethod
-	def get_possible_tiles(current_tile):
-		if current_tile.contain == None: return None
-		chess_piece = current_tile.contain
-		possible_tiles = chess_piece.get_all_possible_tiles(current_tile.row_col)
-		for tile in possible_tiles:
-			row, col = tile
-			if (row > 7 or row < 0) or (col > 7 or col < 0):
-				possible_tiles.remove(tile)
-		return possible_tiles
-
-
 class Pawn(ChessPiece):
 	piece_name = "P"
 	def __init__(self, side):
@@ -257,6 +245,18 @@ class Game:
 			for tile in row:
 				ascii_board = ascii_board.replace(tile.name, "  " if tile.contain == None else tile.contain.chess_piece)
 		return ascii_board
+
+	def get_possible_movements(self, tile):
+		if tile.contain == None: return []
+		chess_piece = tile.contain
+		possible_tiles = chess_piece.get_all_possible_tiles(tile.row_col)
+		for tile in possible_tiles:
+			row, col = tile
+			if (row > 7 or row < 0) or (col > 7 or col < 0):
+				possible_tiles.remove(tile)
+			elif (self.grid[row][col].contain != None):
+				possible_tiles.remove(tile)
+		return possible_tiles
 
 
 Game()
