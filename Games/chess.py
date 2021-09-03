@@ -79,7 +79,7 @@ class Pawn(ChessPiece):
 		row, col = current_tile
 		possible_moves = []
 		possible_moves.append((row + (1 * self.dirn_value), col))
-		if not has_moved: possible_moves.append((row + (2 * self.dirn_value), col))
+		if not self.has_moved: possible_moves.append((row + (2 * self.dirn_value), col))
 		return possible_moves
 
 
@@ -126,7 +126,7 @@ class Bishop(ChessPiece):
 		self.has_moved = False
 
 	def get_all_possible_tiles(self, current_tile):
-		pass
+		return []
 
 class Queen(ChessPiece):
 	piece_name = "Q"
@@ -135,7 +135,7 @@ class Queen(ChessPiece):
 		self.has_moved = False
 
 	def get_all_possible_tiles(self, current_tile):
-		pass
+		return []
 
 class King(ChessPiece):
 	piece_name = "k"
@@ -200,6 +200,7 @@ class Game:
 
 		self.grid = self.__class__.get_default_grid()
 		self.print_board()
+		#print(self.get_movable_tiles())
 
 	@staticmethod
 	def get_default_grid():
@@ -249,14 +250,24 @@ class Game:
 	def get_possible_movements(self, tile):
 		if tile.contain == None: return []
 		chess_piece = tile.contain
-		possible_tiles = chess_piece.get_all_possible_tiles(tile.row_col)
-		for tile in possible_tiles:
+		possible_tiles = []
+		for tile in chess_piece.get_all_possible_tiles(tile.row_col):
 			row, col = tile
 			if (row > 7 or row < 0) or (col > 7 or col < 0):
-				possible_tiles.remove(tile)
+				continue
 			elif (self.grid[row][col].contain != None):
-				possible_tiles.remove(tile)
+				continue
+			possible_tiles.append((row, col))
 		return possible_tiles
+
+	def get_movable_tiles(self):
+		return list(filter(
+			lambda movements: movements[0] != [],
+			map(
+				lambda tile: (self.get_possible_movements(tile), tile.name),
+				[tile for row in self.grid for tile in row]
+			)
+		))
 
 
 Game()
