@@ -90,11 +90,23 @@ class Rook(ChessPiece):
 		self.has_moved = False
 
 	def get_all_possible_tiles(self, current_tile):
-		row, col = current_tile
-		possible_moves = []
-		for i in range(8):
-			if i != row: possible_moves.append((i, col))
-			if i != col: possible_moves.append((row, i))
+		possible_moves = {
+			"up": [],
+			"down": [],
+			"left": [],
+			"right": []
+		}
+		for key in possible_moves.keys():
+			func = {
+				"up": lambda row, col: (row-1, col),
+				"down": lambda row, col: (row+1, col),
+				"left": lambda row, col: (row, col-1),
+				"right": lambda row, col: (row, col+1)
+			}.get(key)
+			row, col = current_tile
+			while not (row <= 0 or row >= 7 or col <= 0 or col >= 7):
+				row, col = func(row, col)
+				possible_moves[key].append((row, col))
 		return possible_moves
 
 class Knight(ChessPiece):
@@ -238,6 +250,7 @@ class Game:
 	def print_board(self):
 		print(self.__class__.info_sheet) #print info sheet
 		print(self.get_ascii_board(self.grid)) #print board
+		print(self.get_movable_tiles())
 
 	@classmethod
 	def get_ascii_board(cls, grid):
@@ -250,14 +263,23 @@ class Game:
 	def get_possible_movements(self, tile):
 		if tile.contain == None: return []
 		chess_piece = tile.contain
+		chess_piece_tiles = chess_piece.get_all_possible_tiles(tile.row_col)
 		possible_tiles = []
-		for tile in chess_piece.get_all_possible_tiles(tile.row_col):
-			row, col = tile
-			if (row > 7 or row < 0) or (col > 7 or col < 0):
-				continue
-			elif (self.grid[row][col].contain != None):
-				continue
-			possible_tiles.append((row, col))
+		if isinstance(chess_piece_tiles, list):
+			for tile in chess_piece_tiles:
+				row, col = tile
+				if (row > 7 or row < 0) or (col > 7 or col < 0):
+					continue
+				elif (self.grid[row][col].contain != None):
+					continue
+				possible_tiles.append(tile)
+		elif isinstance(chess_piece_tiles, dict):
+			for dir_tiles in chess_piece_tiles.values():
+				for dir_tile in dir_tiles:
+					row, col = dir_tile
+					if self.grid[row][col].contain != None:
+						break
+					possible_tiles.append(dir_tile)
 		return possible_tiles
 
 	def get_movable_tiles(self):
