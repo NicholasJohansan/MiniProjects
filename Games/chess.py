@@ -54,6 +54,9 @@ class Side(Enum):
 	B = "B"
 	W = "W"
 
+player_side = Side.W
+computer_side = Side.B
+
 class Tile:
 	def __init__(self, row_col):
 		self.row_col = row_col
@@ -289,6 +292,11 @@ class Game:
 
 		return grid
 
+	def get_tile(self, tile_name):
+		row = 8 - int(tile_name[1])
+		col = abs(ord("a") - ord(tile_name[0]))
+		return self.grid[row][col]
+
 	def print_board(self):
 		print(self.__class__.info_sheet) #print info sheet
 		print(self.get_ascii_board(self.grid)) #print board
@@ -324,14 +332,15 @@ class Game:
 					possible_tiles.append(dir_tile)
 		return possible_tiles
 
-	def get_movable_tiles(self):
-		return list(filter(
+	def get_movable_tiles(self, side=player_side):
+		tmp = list(filter(
 			lambda movements: movements[0] != [],
 			map(
 				lambda tile: (self.get_possible_movements(tile), tile.name),
 				[tile for row in self.grid for tile in row]
 			)
 		))
+		return [move for move in tmp if self.get_tile(move[1]).contain.side == side]
 
 
 Game()
