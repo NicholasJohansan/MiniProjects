@@ -310,6 +310,12 @@ class Game:
 				ascii_board = ascii_board.replace(tile.name, "  " if tile.contain == None else tile.contain.chess_piece)
 		return ascii_board
 
+	def move_tile(self, initial, final):
+		initial_tile = self.get_tile(initial)
+		final_tile = self.get_tile(final)
+		self.grid[final_tile.row][final_tile.col].contain = initial_tile.contain
+		self.grid[initial_tile.row][initial_tile.col].contain = None
+
 	def get_possible_movements(self, tile):
 		if tile.contain == None: return []
 		chess_piece = tile.contain
