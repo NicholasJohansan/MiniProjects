@@ -47,7 +47,7 @@ grid = [
 	["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
 ]
 """
-
+import random
 from enum import Enum
 
 class Side(Enum):
@@ -301,6 +301,15 @@ class Game:
 		print(self.__class__.info_sheet) #print info sheet
 		print(self.get_ascii_board(self.grid)) #print board
 		print(self.get_movable_tiles())
+
+	def random_move(self):
+		moves = self.get_movable_tiles(side=computer_side)
+		tiles, initial = random.choice(moves)
+		row, col = random.choice(tiles)
+		self.move_tile(
+			initial=initial,
+			final=self.grid[row][col].name
+		)
 
 	@classmethod
 	def get_ascii_board(cls, grid):
